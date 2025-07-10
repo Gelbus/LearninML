@@ -43,6 +43,20 @@ def plot_decision_regions(X: np.ndarray, y: np.ndarray, classifier: Any, resolut
     plt.show()
 
 
+def plot_losses(classifier1: Any, classifier2: Any) -> None:
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(10, 4))
+    ax[0].plot(range(1, len(classifier1.losses_) + 1), np.log10(classifier1.losses_), marker='o')
+    ax[0].set_xlabel('Epoch')
+    ax[0].set_ylabel('log(loss)')
+    ax[0].set_title(f'Adaline - learning speed {classifier1.eta}')
+
+    ax[1].plot(range(1, len(classifier2.losses_) + 1), classifier2.losses_, marker='o')
+    ax[1].set_xlabel('Epoch')
+    ax[1].set_ylabel('loss')
+    ax[1].set_title(f'Adaline - learning speed {classifier2.eta}')
+    plt.show()
+
+
 
 if __name__ == "__main__":
     plt.scatter(data.X[:50, 0], data.X[:50, 1], color='red', marker='o', label='Setosa')
