@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
 
-import load_data as data
-
 
 def plot_errors(err: List[int]) -> None:
     plt.plot(range(1, len(err) + 1), err, marker='o')
@@ -14,16 +12,20 @@ def plot_errors(err: List[int]) -> None:
     plt.show()
 
 
-def plot_decision_regions(X: np.ndarray, y: np.ndarray, classifier: Any, resolution: float = 0.02):
-    markers = ('o', 's', '^', 'v', ',')
+def plot_decision_regions(X: np.ndarray, y: np.ndarray, classifier: Any, test_idx=None, resolution: float = 0.02):
+    markers = ('o', 's', '^', 'v', '<')
     colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')
     cmap = ListedColormap(colors[:len(np.unique(y))])
+
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),
                            np.arange(x2_min, x2_max, resolution))
+
     lab = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
     lab = lab.reshape(xx1.shape)
+
     plt.contourf(xx1, xx2, lab, alpha=0.3, cmap=cmap)
     plt.xlim(xx1.min(), xx1.max())
     plt.ylim(xx2.min(), xx2.max())
@@ -36,9 +38,15 @@ def plot_decision_regions(X: np.ndarray, y: np.ndarray, classifier: Any, resolut
                     marker=markers[idx],
                     label=f'Class {cl}',
                     edgecolor='black')
+    if test_idx:
+        X_test, y_test = X[test_idx, :], y[test_idx]
+        plt.scatter(X_test[:, 0], X_test[:, 1],
+                    c='none', edgecolor='black', alpha=1,
+                    linewidths=1, marker='o',
+                    s=100, label='Test set')
 
-    plt.xlabel('Длина чашелистика [см]')
-    plt.ylabel('ДЛина лепестка [см]')
+    plt.xlabel('Длина депестка norm')
+    plt.ylabel('Ширина лепестка norm')
     plt.legend(loc='upper left')
     plt.show()
 
@@ -61,14 +69,4 @@ def plot_losses(classifier: Any) -> None:
     plt.xlabel('Epoch')
     plt.ylabel('Loss')
     plt.title(f'Learning speed {classifier.eta}')
-    plt.show()
-
-
-
-if __name__ == "__main__":
-    plt.scatter(data.X[:50, 0], data.X[:50, 1], color='red', marker='o', label='Setosa')
-    plt.scatter(data.X[50:100, 0], data.X[50:100, 1], color='blue', marker='s', label='Versicolor')
-    plt.xlabel('Длина чашелистика [см]')
-    plt.ylabel('Длина лепестка [см]')
-    plt.legend(loc='upper left')
     plt.show()
